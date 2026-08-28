@@ -12,7 +12,7 @@ python scripts/render_board.py result.json \
 
 主题包括：`campus` 清新校园（默认）、`sports` 活力运动、`ink` 国风书院、`space` 宇宙探索。
 
-内置资源位于 `assets/templates` 和 `assets/fonts`。四套主题使用紧凑的 CSS 矢量装饰；Noto Sans SC 用于保证未安装中文字体的电脑也能清晰显示姓名，Ma Shan Zheng 用于国风主题标题。两套字体的许可证均已保留。
+内置资源位于 `assets/templates` 和 `assets/fonts`。四套主题使用紧凑的 CSS 矢量装饰；Noto Sans SC 用于保证未安装中文字体的电脑也能清晰显示姓名，Ma Shan Zheng 用于国风主题标题。两套字体的许可证均已保留。生成 SkillHub 发布包时，字体会自动内嵌到 CSS 中，不会携带平台禁止的字体文件。
 
 启用 PNG 参数后，脚本会查找本机已安装的 Chrome、Chromium 或 Edge，并截取完整座位表。若没有可用浏览器，HTML 仍会正常生成，脚本会给出明确提示；此时可用宿主的浏览器或截图能力，按 `.board` 元素的原始尺寸导出。
 

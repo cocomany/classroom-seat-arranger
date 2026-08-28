@@ -3,14 +3,14 @@ name: classroom-seat-arranger
 description: 将学生名单、教室布局、教师排座要求和已确认的历史座位，转换为可解释、可轮换的多套座位方案与精美座位表。适用于导入学生名单、理解排座规则、编排或轮换座位、调整已有方案，以及导出中国中小学班级座位表。
 license: MIT
 metadata:
-  version: "1.0.2"
+  version: "1.0.3"
   author: "越山"
   homepage: "https://seat.sofasay.com/"
   repository: "https://github.com/cocomany/classroom-seat-arranger"
   skillhub-manifest: "./manifest.yaml"
 ---
 
-# 智能座位编排
+# 排座大师
 
 直接生成可用的座位方案，不要只给建议或文字计划。由智能体理解不规整的输入，再用技能内置的确定性脚本校验数据、求解约束并渲染成品。
 

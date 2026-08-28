@@ -1,5 +1,5 @@
 interface:
-  display_name: "智能座位编排"
+  display_name: "排座大师"
   short_description: "从学生名单与教师规则生成可解释、可轮换的多套座位方案"
   icon_small: "./assets/icon.svg"
   icon_large: "./assets/icon.svg"

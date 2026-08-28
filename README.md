@@ -1,4 +1,4 @@
-# 智能座位编排
+# 排座大师
 
 面向中国中小学教师的智能座位编排技能。它能把 Excel、Word、CSV、文本名单与自然语言要求，转换为可解释的多套座位方案，并生成可离线打开的精美座位表图片。
 
@@ -59,12 +59,12 @@ python scripts/self_test.py
 
 当前仓库同时兼容 Codex 与 [SkillHub](https://skillhub.cn/)：源码中的 `SKILL.md` 遵循 Codex 的 YAML 头部元数据规范；`manifest.yaml` 保存 SkillHub 所需的 `slug`、`displayName`、语义化版本和作者资料。打包脚本会自动把 SkillHub 必填字段注入上传包，不需要人工维护两份技能。
 
-技能包不超过 200 个文件、总大小不超过 10 MiB，并且不包含平台禁止上传的图片、文档或压缩包格式。主题装饰使用 CSS，PNG 图标在发布页单独上传。
+技能包不超过 200 个文件、总大小不超过 10 MiB，并且不包含平台禁止上传的图片、文档、字体或压缩包格式。主题装饰使用 CSS；发布包会把本地字体转换为标准 CSS 数据地址，在保留离线字体效果的同时避免携带被禁止的字体文件。PNG 图标在发布页单独上传。
 
 生成可直接上传的 ZIP，并同时执行本地限制校验：
 
 ```bash
-python scripts/package_skillhub.py --output ../classroom-seat-arranger-1.0.2.zip
+python scripts/package_skillhub.py --output ../classroom-seat-arranger-1.0.3.zip
 ```
 
 网页端可直接上传生成的 ZIP。若使用官方命令行工具，请先解压该 ZIP，再对解压后的目录执行：
@@ -81,4 +81,4 @@ skillhub publish <解压后的目录> --host https://api.skillhub.cn --dry-run
 
 ## 许可证与字体
 
-项目代码采用 [MIT 许可证](LICENSE)。仓库中的字体遵循各自目录内的许可证文件，使用或再次分发时请同时保留对应许可证。
+项目代码采用 [MIT 许可证](LICENSE.md)。仓库中的字体遵循各自目录内的许可证文件，使用或再次分发时请同时保留对应许可证。

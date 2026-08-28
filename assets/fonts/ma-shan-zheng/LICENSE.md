@@ -1,4 +1,4 @@
-Google Inc.
+Copyright 2018 The MaShanZheng Project Authors (https://github.com/googlefonts/mashanzheng)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
@@ -74,8 +74,8 @@ permission.
 5) The Font Software, modified or unmodified, in part or in whole,
 must be distributed entirely under this license, and must not be
 distributed under any other license. The requirement for fonts to
-remain under this license does not apply to any document created
-using the Font Software.
+remain under this license does not apply to any document created using
+the Font Software.
 
 TERMINATION
 This license becomes null and void if any of the above conditions are

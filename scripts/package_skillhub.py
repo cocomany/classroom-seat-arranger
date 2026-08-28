@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import re
 import sys
@@ -20,9 +21,17 @@ BLOCKED_SUFFIXES = {
     ".exe", ".dll", ".so", ".dylib", ".bin", ".dat", ".zip", ".tar", ".gz", ".bz2", ".rar", ".7z",
     ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp", ".mp3", ".mp4", ".avi", ".mov", ".wav",
     ".flac", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".class", ".jar", ".war",
-    ".o", ".a", ".lib", ".pyc", ".pyo", ".wasm",
+    ".o", ".a", ".lib", ".pyc", ".pyo", ".wasm", ".woff", ".woff2", ".ttf", ".otf", ".eot",
 }
-IGNORED_PARTS = {".git", "__pycache__", "outputs", "output", ".DS_Store"}
+FONT_SUFFIXES = {".woff", ".woff2", ".ttf", ".otf", ".eot"}
+FONT_MIME_TYPES = {
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".ttf": "font/ttf",
+    ".otf": "font/otf",
+    ".eot": "application/vnd.ms-fontobject",
+}
+IGNORED_PARTS = {".git", "__pycache__", "outputs", "output", ".DS_Store", ".gitignore"}
 REQUIRED_FRONTMATTER = ("slug", "version", "displayName")
 
 
@@ -36,8 +45,34 @@ def package_files() -> list[Path]:
             continue
         if path.name.startswith(".env"):
             continue
+        if path.suffix.lower() in FONT_SUFFIXES:
+            continue
         files.append(path)
     return sorted(files)
+
+
+def inline_font_css(path: Path) -> bytes:
+    """把 CSS 引用的本地字体转换为标准 data URI，避开平台禁止的字体文件扩展名。"""
+    css = path.read_text(encoding="utf-8")
+
+    def replace(match: re.Match[str]) -> str:
+        raw = match.group(1).strip().strip("'\"")
+        if raw.startswith(("data:", "http://", "https://")):
+            return match.group(0)
+        resource = (path.parent / raw).resolve()
+        suffix = resource.suffix.lower()
+        if suffix not in FONT_SUFFIXES:
+            return match.group(0)
+        if not resource.is_file() or SKILL_ROOT not in resource.parents:
+            raise ValueError(f"字体资源不存在或超出技能目录：{raw}")
+        encoded = base64.b64encode(resource.read_bytes()).decode("ascii")
+        return f"url('data:{FONT_MIME_TYPES[suffix]};base64,{encoded}')"
+
+    inlined = re.sub(r"url\(([^)]+)\)", replace, css)
+    unresolved = re.findall(r"url\(([^)]*\.(?:woff2?|ttf|otf|eot)[^)]*)\)", inlined, re.IGNORECASE)
+    if unresolved:
+        raise ValueError(f"CSS 中仍有未内嵌字体：{path.relative_to(SKILL_ROOT)}")
+    return inlined.encode("utf-8")
 
 
 def parse_frontmatter_text(text: str) -> dict[str, str]:
@@ -92,12 +127,21 @@ def skillhub_skill_md() -> tuple[str, dict[str, str]]:
     return "---\n" + injected + source[len("---\n"):], values
 
 
-def validate(files: list[Path], generated_skill_md: str, frontmatter: dict[str, str]) -> int:
+def generated_overrides(files: list[Path], generated_skill_md: str) -> dict[str, bytes]:
+    overrides = {"SKILL.md": generated_skill_md.encode("utf-8")}
+    for path in files:
+        relative = path.relative_to(SKILL_ROOT).as_posix()
+        if relative.startswith("assets/fonts/") and path.suffix.lower() == ".css":
+            overrides[relative] = inline_font_css(path)
+    return overrides
+
+
+def validate(files: list[Path], overrides: dict[str, bytes], frontmatter: dict[str, str]) -> int:
     errors = []
     skill_md = SKILL_ROOT / "SKILL.md"
     if skill_md not in files:
         errors.append("根目录必须包含 SKILL.md")
-    elif not generated_skill_md:
+    elif not overrides.get("SKILL.md"):
         errors.append("无法生成 SkillHub 版 SKILL.md；请检查 manifest.yaml")
     for field in REQUIRED_FRONTMATTER:
         if not frontmatter.get(field):
@@ -108,9 +152,10 @@ def validate(files: list[Path], generated_skill_md: str, frontmatter: dict[str, 
         errors.append("version 必须是合法 SemVer")
     if len(files) > MAX_FILES:
         errors.append(f"文件数 {len(files)} 超过 SkillHub 上限 {MAX_FILES}")
-    total = sum(path.stat().st_size for path in files)
-    if skill_md in files and generated_skill_md:
-        total += len(generated_skill_md.encode("utf-8")) - skill_md.stat().st_size
+    total = sum(
+        len(overrides.get(path.relative_to(SKILL_ROOT).as_posix(), path.read_bytes()))
+        for path in files
+    )
     if total > MAX_BYTES:
         errors.append(f"总大小 {total / 1024 / 1024:.2f} MiB 超过 SkillHub 上限 10 MiB")
     blocked = [str(path.relative_to(SKILL_ROOT)) for path in files if path.suffix.lower() in BLOCKED_SUFFIXES]
@@ -131,13 +176,14 @@ def main() -> int:
             raise ValueError("输出 ZIP 必须放在 Skill 根目录之外，避免被收入自身或 GitHub 导入扫描")
         files = package_files()
         generated_skill_md, frontmatter = skillhub_skill_md()
-        total = validate(files, generated_skill_md, frontmatter)
+        overrides = generated_overrides(files, generated_skill_md)
+        total = validate(files, overrides, frontmatter)
         output.parent.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for path in files:
                 relative = path.relative_to(SKILL_ROOT).as_posix()
-                if relative == "SKILL.md":
-                    archive.writestr(relative, generated_skill_md)
+                if relative in overrides:
+                    archive.writestr(relative, overrides[relative])
                 else:
                     archive.write(path, relative)
         print(f"SkillHub 技能包校验通过：{frontmatter['slug']}@{frontmatter['version']} · {len(files)} 个文件 · {total / 1024 / 1024:.2f} MiB")
