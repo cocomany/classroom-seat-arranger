@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{DOCUMENT_TITLE}}</title>
+  <style>
+    {{FONT_CSS}}
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-width: 1200px; color: var(--ink); background: #e8e8e3; font-family: 'Noto Sans SC Variable', 'Microsoft YaHei', sans-serif; }
+    body { padding: 26px; }
+    .board {
+      --paper: #fffef9; --paper-2: #f7fbf2; --ink: #263b2e; --muted: #617568; --accent: #6ca26e; --accent-2: #d2a23e;
+      --line: #a9cfaa; --male: #4d90c6; --female: #df719b; --role-bg: #fff4cc; --role-ink: #a87514;
+      width: 1548px; min-height: {{BOARD_HEIGHT}}px; position: relative; overflow: hidden; margin: 0 auto; padding: 54px 62px 58px;
+      border-radius: 18px; background: linear-gradient(135deg, var(--paper), var(--paper-2)); box-shadow: 0 28px 70px rgb(25 43 33 / 16%);
+    }
+    .board.theme-sports { --paper:#fff; --paper-2:#f5f9ff; --ink:#152c58; --muted:#60728e; --accent:#1754cc; --accent-2:#f36a2c; --line:#b7caee; --male:#3478f6; --female:#ef689f; --role-bg:#fff0e8; --role-ink:#d94e19; }
+    .board.theme-ink { --paper:#f7f3e8; --paper-2:#eee8d8; --ink:#344139; --muted:#687269; --accent:#566b58; --accent-2:#a84b3f; --line:#a5aa9e; --male:#4d7180; --female:#b45f66; --role-bg:#f4e5dc; --role-ink:#a34338; font-family:'Noto Serif SC Variable','Songti SC',serif; }
+    .board.theme-space { --paper:#f8fbff; --paper-2:#eef6ff; --ink:#15376d; --muted:#55729a; --accent:#2574d9; --accent-2:#f0a334; --line:#77a9df; --male:#2778d6; --female:#db659f; --role-bg:#fff7e8; --role-ink:#c87208; }
+    .theme-overlay { position: absolute; inset: 0; z-index: 0; background: center / cover no-repeat url('{{OVERLAY_DATA}}'); pointer-events: none; }
+    .content { position: relative; z-index: 1; }
+    .board-header { display: flex; align-items: end; justify-content: space-between; min-height: 82px; padding: 0 10px 24px; border-bottom: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); }
+    .board-header h1 { max-width: 1120px; overflow: hidden; margin: 0; color: var(--ink); font-size: 48px; line-height: 1.08; font-weight: 900; letter-spacing: .045em; white-space: nowrap; text-overflow: ellipsis; }
+    .theme-ink .board-header h1 { font-family: 'Ma Shan Zheng','STKaiti','KaiTi',serif; font-size: 54px; font-weight: 400; }
+    .board-meta { flex: 0 0 auto; padding-bottom: 4px; color: var(--muted); font-size: 14px; font-weight: 650; letter-spacing: .04em; }
+    .podium-zone { min-height: 116px; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 24px auto 19px; }
+    .podium { width: 350px; height: 76px; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--accent) 70%, white); border-radius: 17px; color: var(--accent); background: color-mix(in srgb, var(--paper) 90%, white); box-shadow: inset 0 0 0 5px rgb(255 255 255 / 34%); }
+    .podium b { font-size: 24px; letter-spacing: .25em; transform: translateX(.12em); }
+    .podium small { margin-top: -19px; color: var(--muted); font-size: 10px; letter-spacing: .12em; }
+    .rows { display: flex; flex-direction: column; gap: 14px; }
+    .seat-row { display: grid; grid-template-columns: {{GRID_COLUMNS}}; align-items: stretch; justify-content: center; }
+    .gap { width: 100%; position: relative; }
+    .gap.seam::after { content:''; position:absolute; top:15%; bottom:15%; left:50%; border-left:1px dashed color-mix(in srgb, var(--line) 68%, transparent); }
+    .gap.aisle { border-left: 1px dotted color-mix(in srgb, var(--line) 45%, transparent); border-right: 1px dotted color-mix(in srgb, var(--line) 45%, transparent); }
+    .seat-card { height: 96px; min-width: 0; position: relative; display: grid; grid-template-columns: minmax(0,1fr) 34px; align-items: center; gap: 2px; padding: 12px 6px 10px 10px; border: 1px solid var(--line); border-top: 3px solid var(--student-accent,var(--accent)); border-radius: 11px; color: var(--ink); background: color-mix(in srgb, var(--paper) 92%, white); box-shadow: 0 5px 12px color-mix(in srgb, var(--accent) 9%, transparent), 3px 3px 0 color-mix(in srgb, var(--accent) 5%, transparent); }
+    .theme-ink .seat-card { border-radius: 2px; border-style: double; background: rgb(250 248 239 / 92%); }
+    .theme-space .seat-card { border-radius: 3px; clip-path: polygon(7px 0,calc(100% - 7px) 0,100% 7px,100% calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,0 calc(100% - 7px),0 7px); }
+    .seat-card.disabled { display: block; border: 1px dashed color-mix(in srgb, var(--accent) 34%, transparent); background: transparent; box-shadow: none; clip-path: none; }
+    .seat-card.empty { border-style: dashed; opacity: .52; background: transparent; box-shadow: none; }
+    .student-main { min-width: 0; overflow: hidden; }
+    .student-line { min-width: 0; display: flex; align-items: center; gap: 5px; }
+    .student-name { min-width: 0; overflow: hidden; font-size: 25px; line-height: 1.05; font-weight: 850; letter-spacing: .02em; white-space: nowrap; text-overflow: clip; }
+    .name-3 { font-size: 22px; letter-spacing: 0; }
+    .name-4 { font-size: 18px; letter-spacing: 0; }
+    .gender { flex: 0 0 auto; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; color: white; font-size: 11px; font-weight: 900; background: var(--student-accent,#819087); }
+    .role { max-width: 100%; overflow: hidden; display: inline-block; margin-top: 8px; padding: 3px 7px; border-radius: 5px; color: var(--role-ink); background: var(--role-bg); font-size: 11px; line-height: 1.2; font-weight: 800; white-space: nowrap; text-overflow: ellipsis; }
+    .student-tags { height: 68px; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 3px; overflow: hidden; }
+    .student-tags span { overflow: hidden; padding: 2px 3px; border-radius: 4px; color: var(--muted); background: color-mix(in srgb, var(--accent) 9%, white); font-size: 9px; line-height: 1.25; text-align: center; white-space: nowrap; text-overflow: ellipsis; }
+    .seat-number { position: absolute; right: 6px; bottom: 3px; color: color-mix(in srgb, var(--muted) 52%, transparent); font-size: 8px; font-variant-numeric: tabular-nums; }
+    .side-seat { width: 156px; flex: 0 0 156px; }
+    .board-footer { margin-top: 28px; display:flex; align-items:center; justify-content:space-between; padding: 14px 10px 0; border-top: 1px solid color-mix(in srgb,var(--accent) 20%,transparent); color: var(--muted); font-size: 11px; }
+    .board-footer b { color: var(--accent); font-size: 12px; letter-spacing:.08em; }
+    @media print { html,body { min-width:0; background:white; } body { padding:0; } .board { box-shadow:none; border-radius:0; } @page { size: landscape; margin: 0; } }
+  </style>
+</head>
+<body>
+  <main class="board theme-{{THEME}}">
+    <div class="theme-overlay" aria-hidden="true"></div>
+    <div class="content">
+      <header class="board-header">
+        <h1>{{CLASS_NAME}}座位表</h1>
+        <div class="board-meta">{{META}}</div>
+      </header>
+      <section class="podium-zone" aria-label="讲台区域">
+        {{PODIUM_LEFT}}
+        <div class="podium"><b>讲台</b><small>面向学生</small></div>
+        {{PODIUM_RIGHT}}
+      </section>
+      <section class="rows" aria-label="学生座位">{{ROWS_HTML}}</section>
+      <footer class="board-footer"><span>{{SUMMARY}}</span><span>powered by <b>越山</b></span></footer>
+    </div>
+  </main>
+</body>
+</html>

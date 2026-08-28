@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "className": "三年级二班",
+  "students": [
+    {"id":"s001","name":"林晓","gender":"female","heightCm":154,"vision":"severe","score":88,"discipline":"quiet","role":"班长"},
+    {"id":"s002","name":"周屿","gender":"male","heightCm":168,"vision":"normal","score":72,"discipline":"talkative"},
+    {"id":"s003","name":"陈晓曦","gender":"female","heightCm":160,"vision":"mild","score":96,"discipline":"normal","role":"学习委员"},
+    {"id":"s004","name":"许诺","gender":"male","heightCm":172,"vision":"normal","score":63,"discipline":"talkative"},
+    {"id":"s005","name":"沈星","gender":"female","heightCm":158,"vision":"moderate","score":82,"discipline":"quiet","role":"语文课代表"},
+    {"id":"s006","name":"欧阳若曦","gender":"male","heightCm":176,"vision":"normal","score":91,"discipline":"normal"},
+    {"id":"s007","name":"苏禾","gender":"female","heightCm":162,"vision":"mild","score":68,"discipline":"talkative","role":"文艺委员"},
+    {"id":"s008","name":"江宁","gender":"male","heightCm":170,"vision":"normal","score":78,"discipline":"normal"},
+    {"id":"s009","name":"叶澄","gender":"female","heightCm":156,"vision":"severe","score":85,"discipline":"normal","role":"纪律委员"},
+    {"id":"s010","name":"陆川","gender":"male","heightCm":174,"vision":"normal","score":74,"discipline":"talkative","role":"体育委员"},
+    {"id":"s011","name":"唐果","gender":"female","heightCm":159,"vision":"normal","score":92,"discipline":"quiet","role":"英语课代表"},
+    {"id":"s012","name":"夏至","gender":"male","heightCm":166,"vision":"mild","score":66,"discipline":"normal"},
+    {"id":"s013","name":"温宁","gender":"female","heightCm":157,"vision":"normal","score":81,"discipline":"normal"},
+    {"id":"s014","name":"程野","gender":"male","heightCm":178,"vision":"normal","score":59,"discipline":"talkative","role":"劳动委员"},
+    {"id":"s015","name":"乔安","gender":"female","heightCm":161,"vision":"moderate","score":89,"discipline":"quiet","role":"数学课代表"},
+    {"id":"s016","name":"贺川","gender":"male","heightCm":173,"vision":"normal","score":76,"discipline":"normal"}
+  ],
+  "layout": {"rows":"auto","cols":8,"aislesAfter":[2,4,6],"disabledSeatIds":[],"podiumSideSeats":false,"trimExtraSeats":true},
+  "rules": [
+    {"id":"r-fixed","type":"fixed","level":"hard","studentId":"s001","seatId":"seat-0-0","label":"林晓固定在第一排左侧"},
+    {"id":"r-front","type":"front","level":"hard","studentIds":["s005","s009"],"rows":2,"label":"两名中重度近视学生必须在前两排"},
+    {"id":"r-avoid","type":"avoid","level":"hard","studentIds":["s002","s004"],"distance":1,"label":"周屿和许诺不能相邻"},
+    {"id":"r-height","type":"height","level":"soft","weight":65,"label":"身高尽量前低后高"},
+    {"id":"r-order","type":"discipline","level":"soft","weight":75,"label":"课堂活跃学生尽量分散"},
+    {"id":"r-score","type":"score","level":"soft","weight":55,"label":"同桌成绩尽量互补"},
+    {"id":"r-gender","type":"gender","level":"soft","weight":45,"mode":"mixed","label":"男女生优先同桌"}
+  ],
+  "history": [],
+  "options": {"candidateCount":3,"seed":20260824,"considerHistory":false}
+}

@@ -1,0 +1,7 @@
+interface:
+  display_name: "智能座位编排"
+  short_description: "从学生名单与教师规则生成可解释、可轮换的多套座位方案"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#195F47"
+  default_prompt: "使用 $classroom-seat-arranger 根据这份学生名单和我的要求，生成三个座位方案并导出座位表。"

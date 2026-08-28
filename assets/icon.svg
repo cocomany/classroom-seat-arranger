@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="智能座位编排">
+  <rect width="128" height="128" rx="28" fill="#195f47"/>
+  <rect x="25" y="27" width="34" height="26" rx="7" fill="#fffdf7"/>
+  <rect x="69" y="27" width="34" height="26" rx="7" fill="#fffdf7"/>
+  <rect x="25" y="64" width="34" height="26" rx="7" fill="#fffdf7"/>
+  <rect x="69" y="64" width="34" height="26" rx="7" fill="#fffdf7"/>
+  <path d="M43 96h42" stroke="#dff36a" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="42" cy="40" r="5" fill="#28775a"/>
+  <circle cx="86" cy="40" r="5" fill="#e379a4"/>
+  <circle cx="42" cy="77" r="5" fill="#e379a4"/>
+  <circle cx="86" cy="77" r="5" fill="#28775a"/>
+</svg>
