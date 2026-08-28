@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and build a SkillHub-compatible ZIP package."""
+"""校验并生成兼容 SkillHub 的 ZIP 技能包。"""
 
 from __future__ import annotations
 
@@ -9,6 +9,8 @@ import re
 import sys
 import zipfile
 from pathlib import Path
+
+from cli_zh import ChineseArgumentParser
 
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
@@ -120,8 +122,8 @@ def validate(files: list[Path], generated_skill_md: str, frontmatter: dict[str, 
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="校验并生成 SkillHub 可上传 ZIP。")
-    parser.add_argument("--output", "-o", type=Path, required=True, help="ZIP 输出路径，必须位于 Skill 根目录之外")
+    parser = ChineseArgumentParser(description="校验并生成 SkillHub 可上传 ZIP。")
+    parser.add_argument("--output", "-o", type=Path, required=True, help="ZIP 输出路径，必须位于技能根目录之外")
     args = parser.parse_args()
     try:
         output = args.output.resolve()
@@ -138,8 +140,8 @@ def main() -> int:
                     archive.writestr(relative, generated_skill_md)
                 else:
                     archive.write(path, relative)
-        print(f"SKILLHUB_PACKAGE_OK: {frontmatter['slug']}@{frontmatter['version']} · {len(files)} files · {total / 1024 / 1024:.2f} MiB")
-        print(f"ZIP: {output} · {output.stat().st_size / 1024 / 1024:.2f} MiB")
+        print(f"SkillHub 技能包校验通过：{frontmatter['slug']}@{frontmatter['version']} · {len(files)} 个文件 · {total / 1024 / 1024:.2f} MiB")
+        print(f"ZIP 文件：{output} · {output.stat().st_size / 1024 / 1024:.2f} MiB")
         return 0
     except (OSError, ValueError, zipfile.BadZipFile) as error:
         print(f"打包失败：{error}", file=sys.stderr)

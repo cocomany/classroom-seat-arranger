@@ -1,36 +1,36 @@
-# Rule model
+# 排座规则模型
 
-Convert teacher language into explicit structured intent. Prefer a small set of composable rules over a long prompt.
+把教师的自然语言要求转换为明确的结构化意图。优先组合少量清晰规则，不要把所有要求堆进一段长提示词。
 
-All rules have `id`, `type`, `level`, and a Chinese `label`. Soft rules also use `weight` from 1–100. `hard` means failure makes the candidate unusable; `soft` means optimize and explain the degree achieved.
+每条规则都包含 `id`、`type`、`level` 和中文 `label`。软规则还需设置 1 至 100 的 `weight`。`hard` 表示违反后方案不可用，`soft` 表示尽量优化并解释满足程度。
 
-## Supported rules
+## 支持的规则
 
-### Front rows
+### 靠前安排
 
 ```json
 {"id":"r-front","type":"front","level":"hard","studentIds":["s001"],"rows":2,"label":"林晓必须在前两排"}
 ```
 
-Use for vision, hearing, attention, or teacher-directed front-row placement. “尽量靠前” is soft; “必须前两排” is hard.
+适用于视力、听力、注意力或教师明确要求靠前的学生。“尽量靠前”是软规则，“必须前两排”是硬规则。
 
-### Avoid nearby
+### 避免相邻
 
 ```json
 {"id":"r-avoid","type":"avoid","level":"hard","studentIds":["s003","s009"],"distance":1,"label":"两人不能相邻"}
 ```
 
-`distance: 1` prevents Manhattan-adjacent seats; `2` creates a wider buffer. More than two student IDs means every pair in the group is checked.
+`distance: 1` 表示曼哈顿距离相邻的座位不可同时安排目标学生；设为 `2` 会留出更大间隔。目标学生超过两人时，检查组内每一对学生。
 
-### Fixed/locked seat
+### 固定或锁定座位
 
 ```json
 {"id":"r-fixed","type":"fixed","level":"hard","studentId":"s007","seatId":"seat-0-3","label":"锁定当前座位"}
 ```
 
-Use after teacher drag-adjustment or an explicit seat assignment. Fixed rules are always hard.
+教师拖动调整或明确指定座位后使用。固定座位始终是硬规则。
 
-### Height, classroom behavior, and score
+### 身高、课堂表现与成绩
 
 ```json
 {"id":"r-height","type":"height","level":"soft","weight":65,"label":"身高尽量前低后高"}
@@ -38,36 +38,36 @@ Use after teacher drag-adjustment or an explicit seat assignment. Fixed rules ar
 {"id":"r-score","type":"score","level":"soft","weight":55,"label":"同桌成绩尽量互补"}
 ```
 
-Only use these when the relevant student field exists. Do not infer behavior or achievement from names, gender, roles, or prior seats.
+只有学生数据包含相应字段时才使用这些规则。不得根据姓名、性别、职务或历史座位推断课堂表现或成绩。
 
-### Gender pairing
+### 性别搭配
 
 ```json
 {"id":"r-gender","type":"gender","level":"soft","weight":60,"mode":"mixed","label":"男女生优先同桌"}
 ```
 
-Modes:
+`mode` 可选值：
 
-- `mixed`: different known genders at a two-person desk;
-- `same`: same known gender;
-- `female`: female students prefer female desk mates; male-only desks are not penalized;
-- `male`: male students prefer male desk mates; female-only desks are not penalized.
+- `mixed`：已知性别不同的两名学生优先同桌；
+- `same`：已知性别相同的两名学生优先同桌；
+- `female`：女生优先与女生同桌，男生桌不扣分；
+- `male`：男生优先与男生同桌，女生桌不扣分。
 
-Unknown gender is neutral. A phrase such as “女生与女生同桌” maps to `female`, not to historical fairness.
+未知性别按中性处理。“女生与女生同桌”应转换为 `female`，不能错误转换为历史公平规则。
 
-### Fair rotation
+### 公平轮换
 
 ```json
 {"id":"r-fair","type":"fairness","level":"soft","weight":85,"label":"参考历史进行前中后轮换并减少重复同桌"}
 ```
 
-Use only with confirmed history and explicit or clearly implied permission to consider it. The solver compares recent front/middle/back zones and repeated desk mates. Fairness is normally soft because strict long-term rotation can conflict with vision or accessibility needs.
+只有存在已确认历史，并且用户明确或明显同意参考历史时才使用。求解器会比较最近几次的前中后区域与重复同桌情况。公平轮换通常设为软规则，因为严格轮换可能与视力或无障碍需求冲突。
 
-## Interpretation rules
+## 理解规则时的判断
 
-- “必须、固定、不能、禁止” usually means hard.
-- “尽量、优先、最好、均衡” means soft.
-- If wording is ambiguous and switching hard/soft could materially change the result, ask one focused question.
-- Preserve accessibility and safety requirements over cosmetic fairness.
-- Validate every mentioned student against the roster. Similar names are not interchangeable.
-- If hard rules conflict, report the conflict. Never quietly remove, weaken, or relabel one.
+- “必须、固定、不能、禁止”通常表示硬规则。
+- “尽量、优先、最好、均衡”表示软规则。
+- 如果语义不明确，而且硬软规则的选择会实质影响结果，只追问一个聚焦问题。
+- 无障碍和安全要求优先于形式上的公平。
+- 校验规则中提到的每名学生；相似姓名不能相互替代。
+- 硬规则冲突时必须说明，不得悄悄删除、弱化或改名。

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a valid solver candidate as self-contained HTML and optional PNG."""
+"""将有效候选方案渲染为自包含 HTML，并可选导出 PNG。"""
 
 from __future__ import annotations
 
@@ -16,6 +16,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from cli_zh import ChineseArgumentParser
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -202,15 +204,15 @@ def render(result: dict[str, Any], candidate_index: int, theme: str, show_tags: 
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="将有效座位方案渲染为离线 HTML 和可选 PNG。")
-    parser.add_argument("result", type=Path, help="arrange_seats.py 结果 JSON")
+    parser = ChineseArgumentParser(description="将有效座位方案渲染为离线 HTML 和可选 PNG。")
+    parser.add_argument("result", type=Path, help="排座求解器生成的结果 JSON")
     parser.add_argument("--candidate", type=int, default=0, help="方案序号，从 0 开始")
-    parser.add_argument("--theme", choices=["campus", "sports", "ink", "space"], default="campus")
+    parser.add_argument("--theme", choices=["campus", "sports", "ink", "space"], default="campus", help="主题：清新校园、活力运动、国风书院或宇宙探索")
     parser.add_argument("--output", "-o", type=Path, required=True, help="输出 HTML")
     parser.add_argument("--png", type=Path, help="可选 PNG 输出")
-    parser.add_argument("--hide-tags", action="store_true")
-    parser.add_argument("--hide-roles", action="store_true")
-    parser.add_argument("--no-embed-fonts", action="store_true")
+    parser.add_argument("--hide-tags", action="store_true", help="隐藏学生属性标签")
+    parser.add_argument("--hide-roles", action="store_true", help="隐藏班级职务")
+    parser.add_argument("--no-embed-fonts", action="store_true", help="不嵌入本地中文字体，仅用于诊断")
     args = parser.parse_args()
     try:
         result = json.loads(args.result.read_text(encoding="utf-8-sig"))

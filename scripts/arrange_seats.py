@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic constraint solver for classroom seat arrangements."""
+"""用于班级座位编排的确定性约束求解器。"""
 
 from __future__ import annotations
 
@@ -13,6 +13,8 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+from cli_zh import ChineseArgumentParser
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -595,7 +597,7 @@ def solve(request: dict[str, Any]) -> dict[str, Any]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="根据学生、教室、规则和历史生成可解释座位方案。")
+    parser = ChineseArgumentParser(description="根据学生、教室、规则和历史生成可解释座位方案。")
     parser.add_argument("request", type=Path, help="请求 JSON")
     parser.add_argument("--output", "-o", type=Path, required=True, help="结果 JSON")
     args = parser.parse_args()

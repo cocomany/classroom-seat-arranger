@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fast behavioral self-test for the packaged skill."""
+"""对技能包执行快速行为自检。"""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from arrange_seats import solve
+from cli_zh import ChineseArgumentParser
 from import_students import docx_rows, normalize_rows, xlsx_rows
 from render_board import capture_png, locate_chrome, render
 
@@ -58,7 +59,7 @@ def assert_candidate_integrity(result: dict) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="验证座位编排 Skill 的导入、求解、轮换和渲染。")
+    parser = ChineseArgumentParser(description="验证座位编排技能的导入、求解、轮换和渲染。")
     parser.add_argument("--with-png", action="store_true", help="如果本机有 Chrome，再验证 PNG 截图")
     args = parser.parse_args()
 
@@ -144,7 +145,7 @@ def main() -> int:
             capture_png(html_path, png, height)
             assert png.read_bytes()[1:4] == b"PNG" and png.stat().st_size > 100_000
 
-    print("SELF_TEST_OK: import, deterministic solving, hard constraints, history fairness, and rendering passed")
+    print("自检通过：名单导入、确定性求解、硬规则、历史公平性和渲染均正常")
     return 0
 
 

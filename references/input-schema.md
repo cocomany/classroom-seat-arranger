@@ -1,8 +1,8 @@
-# Input and result schema
+# 输入与结果数据结构
 
-Use UTF-8 JSON. Unknown optional fields may be preserved, but the solver reads the fields below.
+统一使用 UTF-8 编码的 JSON。未知的可选字段可以保留，但求解器只读取下列字段。
 
-## Request
+## 请求结构
 
 ```json
 {
@@ -39,28 +39,28 @@ Use UTF-8 JSON. Unknown optional fields may be preserved, but the solver reads t
 }
 ```
 
-### Student values
+### 学生字段
 
-- `id`: required stable identifier. Keep it unchanged between rotations. The importer creates `s001`, `s002`, and so on.
-- `name`: required non-empty display name. Duplicate names require distinct IDs and teacher confirmation.
-- `gender`: `male`, `female`, or `unknown`.
-- `vision`: `normal`, `mild`, `moderate`, `severe`, or `unknown`.
-- `discipline`: `quiet`, `normal`, `talkative`, or `unknown`.
-- `heightCm`, `score`, `role`, and `tags` are optional. Do not invent absent values.
+- `id`：必填且稳定的学生编号，后续轮换时保持不变。导入脚本会依次生成 `s001`、`s002` 等编号。
+- `name`：必填且不能为空。重名学生必须使用不同编号，并请教师确认身份。
+- `gender`：可选值为 `male`、`female` 或 `unknown`。
+- `vision`：可选值为 `normal`、`mild`、`moderate`、`severe` 或 `unknown`。
+- `discipline`：可选值为 `quiet`、`normal`、`talkative` 或 `unknown`。
+- `heightCm`、`score`、`role` 和 `tags` 为可选字段，不得编造缺失值。
 
-The importer recognizes common Chinese/English headers such as 姓名/name、性别/gender、身高/height、视力/近视/vision、成绩/score、纪律/课堂表现/discipline、职务/role、标签/tags.
+导入脚本可识别姓名、性别、身高、视力、近视、成绩、纪律、课堂表现、职务、标签等常见中文表头，同时兼容相应英文表头。
 
-### Layout
+### 教室布局
 
-- `cols` must be an integer from 4 to 10.
-- `rows` is a positive integer or `"auto"`.
-- Seat IDs are `seat-{zeroBasedRow}-{zeroBasedColumn}`. Optional podium seats are `podium-left` and `podium-right`.
-- `aislesAfter` uses one-based column numbers. `[2,4,6]` means an aisle follows each pair in an 8-column room.
-- With `trimExtraSeats: true`, automatically calculated surplus seats become unavailable from the back-right of the final row. Explicit disabled seats are preserved.
+- `cols` 必须是 4 至 10 的整数。
+- `rows` 可以是正整数或 `"auto"`。
+- 普通座位编号格式为 `seat-{从零开始的行号}-{从零开始的列号}`；可选讲台侧座位为 `podium-left` 和 `podium-right`。
+- `aislesAfter` 使用从 1 开始的列号。8 列教室设置 `[2,4,6]`，表示每两个座位后有一条过道。
+- `trimExtraSeats` 为 `true` 时，自动计算出的多余座位会从最后一排右侧开始设为不可用；明确指定的不可用座位始终保留。
 
-### Confirmed history
+### 已确认历史
 
-History entries need only the information required for fair rotation:
+历史记录只需保存公平轮换所需的信息：
 
 ```json
 {
@@ -72,24 +72,24 @@ History entries need only the information required for fair rotation:
 }
 ```
 
-Use at most the most recent six confirmed versions unless the user requests another policy. Candidate/rejected layouts are not history.
+除非用户另有要求，最多使用最近六次已确认记录。候选方案和未采用方案不属于历史。
 
-## Import command
+## 导入命令
 
 ```bash
 python scripts/import_students.py roster.xlsx --class-name 三年级二班 --output request.json
 ```
 
-Supported locally without extra packages: `.xlsx`, `.docx` tables, `.csv`, `.tsv`, `.txt`, and `.json`. Images and PDFs require the host agent's vision/document capability before normalization.
+无需安装额外软件包即可读取 `.xlsx`、`.docx` 表格、`.csv`、`.tsv`、`.txt` 和 `.json`。图片与 PDF 需先由宿主智能体的视觉或文档能力识别，再进行标准化。
 
-## Result
+## 结果结构
 
-The solver writes normalized students, layout, seats, rules, issues, and `candidates`. Each candidate contains:
+求解器会输出标准化后的学生、布局、座位、规则、问题说明和 `candidates`。每套候选方案包含：
 
-- `assignment`: seat ID to student ID or `null`;
-- `score`: weighted 0–100 score;
-- `hardViolations`: must be empty for a usable result;
-- `ruleScores`: per-rule score and concise detail;
-- `title` and `summary`: the candidate's principle.
+- `assignment`：座位编号到学生编号的对应关系，空座位为 `null`；
+- `score`：0 至 100 的加权得分；
+- `hardViolations`：可用方案必须为空；
+- `ruleScores`：每条规则的得分和简短说明；
+- `title` 和 `summary`：该方案的名称与一句话原则。
 
-`status` is `ok` or `unsatisfiable`. Do not render an `unsatisfiable` result as if it were valid.
+`status` 的值为 `ok` 或 `unsatisfiable`。不得把 `unsatisfiable` 的结果渲染成有效方案。

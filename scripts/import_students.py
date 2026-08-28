@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normalize common roster files into a classroom-seat-arranger request."""
+"""将常见学生名单文件标准化为座位编排请求。"""
 
 from __future__ import annotations
 
@@ -11,6 +11,8 @@ import sys
 import zipfile
 from pathlib import Path
 from typing import Any
+
+from cli_zh import ChineseArgumentParser
 from xml.etree import ElementTree as ET
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -266,7 +268,7 @@ def default_request(class_name: str, students: list[dict[str, Any]], warnings: l
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="将常见学生名单归一化为座位编排请求 JSON。")
+    parser = ChineseArgumentParser(description="将常见学生名单归一化为座位编排请求 JSON。")
     parser.add_argument("source", type=Path, help=".xlsx/.docx/.csv/.tsv/.txt/.json 名单")
     parser.add_argument("--class-name", default="未命名班级", help="班级名称")
     parser.add_argument("--output", "-o", type=Path, required=True, help="输出 JSON")
