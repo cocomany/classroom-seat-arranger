@@ -5,6 +5,7 @@ __pycache__/
 !.env.example
 outputs/
 output/
+dist/
 *.local.json
 .DS_Store
 Thumbs.db

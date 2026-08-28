@@ -1,6 +1,13 @@
 ---
 name: classroom-seat-arranger
 description: Turn class rosters, classroom layouts, teacher requirements, and confirmed seating history into explainable seating candidates and polished seat-chart files. Use for importing student lists, interpreting seating rules, arranging or rotating classroom seats, revising an existing chart, or exporting a Chinese classroom seat chart.
+license: MIT
+metadata:
+  version: "1.0.1"
+  author: "越山"
+  homepage: "https://seat.sofasay.com/"
+  repository: "https://github.com/cocomany/classroom-seat-arranger"
+  skillhub-manifest: "./manifest.yaml"
 ---
 
 # Classroom Seat Arranger

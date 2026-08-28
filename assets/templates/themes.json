@@ -1,6 +1,6 @@
 {
-  "campus": {"name": "清新校园", "overlay": "campus-overlay.png"},
-  "sports": {"name": "活力运动", "overlay": "sports-overlay.png"},
-  "ink": {"name": "国风书院", "overlay": "ink-overlay.png"},
-  "space": {"name": "宇宙探索", "overlay": "space-overlay.png"}
+  "campus": {"name": "清新校园"},
+  "sports": {"name": "活力运动"},
+  "ink": {"name": "国风书院"},
+  "space": {"name": "宇宙探索"}
 }

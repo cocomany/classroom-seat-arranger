@@ -48,7 +48,7 @@ def font_css(embed: bool) -> str:
     if not embed:
         return ""
     styles = []
-    for family in ("noto-sans-sc", "noto-serif-sc", "ma-shan-zheng"):
+    for family in ("noto-sans-sc", "ma-shan-zheng"):
         path = ASSETS / "fonts" / family / "index.css"
         if path.is_file():
             styles.append(embed_css_file(path))
@@ -176,7 +176,6 @@ def render(result: dict[str, Any], candidate_index: int, theme: str, show_tags: 
                 podium_left = card
             else:
                 podium_right = card
-    overlay_path = ASSETS / "themes" / theme_config[theme]["overlay"]
     board_height = max(720, 430 + int(layout["rows"]) * 112)
     generated = result.get("generatedAt", "")
     try:
@@ -188,7 +187,6 @@ def render(result: dict[str, Any], candidate_index: int, theme: str, show_tags: 
         "{{FONT_CSS}}": font_css(embed_fonts),
         "{{BOARD_HEIGHT}}": str(board_height),
         "{{GRID_COLUMNS}}": grid_columns(layout["cols"], layout["aislesAfter"]),
-        "{{OVERLAY_DATA}}": data_uri(overlay_path),
         "{{THEME}}": theme,
         "{{CLASS_NAME}}": html.escape(str(result["className"])),
         "{{META}}": html.escape(f"{date_text} · {len(result['students'])} 人"),

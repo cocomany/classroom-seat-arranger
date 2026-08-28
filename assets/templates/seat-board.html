@@ -7,7 +7,7 @@
   <style>
     {{FONT_CSS}}
     * { box-sizing: border-box; }
-    html, body { margin: 0; min-width: 1200px; color: var(--ink); background: #e8e8e3; font-family: 'Noto Sans SC Variable', 'Microsoft YaHei', sans-serif; }
+    html, body { margin: 0; min-width: 1200px; color: var(--ink); background: #e8e8e3; font-family: 'Noto Sans SC Variable', 'Microsoft YaHei', 'PingFang SC', 'Ma Shan Zheng', sans-serif; }
     body { padding: 26px; }
     .board {
       --paper: #fffef9; --paper-2: #f7fbf2; --ink: #263b2e; --muted: #617568; --accent: #6ca26e; --accent-2: #d2a23e;
@@ -16,9 +16,45 @@
       border-radius: 18px; background: linear-gradient(135deg, var(--paper), var(--paper-2)); box-shadow: 0 28px 70px rgb(25 43 33 / 16%);
     }
     .board.theme-sports { --paper:#fff; --paper-2:#f5f9ff; --ink:#152c58; --muted:#60728e; --accent:#1754cc; --accent-2:#f36a2c; --line:#b7caee; --male:#3478f6; --female:#ef689f; --role-bg:#fff0e8; --role-ink:#d94e19; }
-    .board.theme-ink { --paper:#f7f3e8; --paper-2:#eee8d8; --ink:#344139; --muted:#687269; --accent:#566b58; --accent-2:#a84b3f; --line:#a5aa9e; --male:#4d7180; --female:#b45f66; --role-bg:#f4e5dc; --role-ink:#a34338; font-family:'Noto Serif SC Variable','Songti SC',serif; }
+    .board.theme-ink { --paper:#f7f3e8; --paper-2:#eee8d8; --ink:#344139; --muted:#687269; --accent:#566b58; --accent-2:#a84b3f; --line:#a5aa9e; --male:#4d7180; --female:#b45f66; --role-bg:#f4e5dc; --role-ink:#a34338; font-family:'Songti SC','STSong','Noto Sans SC Variable','Ma Shan Zheng',serif; }
     .board.theme-space { --paper:#f8fbff; --paper-2:#eef6ff; --ink:#15376d; --muted:#55729a; --accent:#2574d9; --accent-2:#f0a334; --line:#77a9df; --male:#2778d6; --female:#db659f; --role-bg:#fff7e8; --role-ink:#c87208; }
-    .theme-overlay { position: absolute; inset: 0; z-index: 0; background: center / cover no-repeat url('{{OVERLAY_DATA}}'); pointer-events: none; }
+    .theme-overlay { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .theme-overlay::before, .theme-overlay::after { content: ''; position: absolute; pointer-events: none; }
+    .theme-campus .theme-overlay {
+      background:
+        radial-gradient(circle at 8% 12%, rgb(111 174 105 / 16%) 0 4px, transparent 5px),
+        radial-gradient(circle at 94% 84%, rgb(214 169 69 / 14%) 0 5px, transparent 6px),
+        linear-gradient(115deg, transparent 0 72%, rgb(106 158 102 / 6%) 72% 73%, transparent 73% 100%);
+      background-size: 58px 58px, 72px 72px, 100% 100%;
+    }
+    .theme-campus .theme-overlay::before { width: 280px; height: 280px; left: -105px; top: -112px; border: 32px solid rgb(103 155 100 / 12%); border-radius: 46% 54% 61% 39%; transform: rotate(24deg); }
+    .theme-campus .theme-overlay::after { width: 210px; height: 210px; right: -92px; bottom: -88px; border: 26px solid rgb(218 173 73 / 11%); border-radius: 58% 42% 48% 52%; transform: rotate(-18deg); }
+    .theme-sports .theme-overlay {
+      background:
+        linear-gradient(90deg, transparent 49.88%, rgb(34 87 173 / 8%) 49.88% 50.12%, transparent 50.12%),
+        radial-gradient(circle at 50% 50%, transparent 0 82px, rgb(34 87 173 / 8%) 83px 85px, transparent 86px),
+        repeating-linear-gradient(135deg, transparent 0 48px, rgb(243 106 44 / 4%) 49px 51px, transparent 52px 100px);
+    }
+    .theme-sports .theme-overlay::before { width: 300px; height: 300px; right: -145px; top: 48px; border: 24px solid rgb(243 106 44 / 10%); border-radius: 50%; }
+    .theme-sports .theme-overlay::after { width: 220px; height: 110px; left: -48px; bottom: 34px; border: 3px solid rgb(23 84 204 / 10%); border-radius: 0 0 110px 110px; }
+    .theme-ink .theme-overlay {
+      background:
+        radial-gradient(ellipse at 11% 18%, rgb(53 67 59 / 10%) 0, transparent 28%),
+        radial-gradient(ellipse at 88% 74%, rgb(77 94 78 / 8%) 0, transparent 31%),
+        repeating-linear-gradient(0deg, rgb(79 68 47 / 2%) 0 1px, transparent 1px 6px);
+    }
+    .theme-ink .theme-overlay::before { width: 360px; height: 190px; left: -90px; bottom: -55px; border: 28px solid rgb(52 65 57 / 7%); border-color: rgb(52 65 57 / 7%) transparent transparent rgb(52 65 57 / 7%); border-radius: 50%; transform: rotate(-10deg); }
+    .theme-ink .theme-overlay::after { width: 54px; height: 54px; right: 58px; top: 56px; border: 4px double rgb(168 75 63 / 24%); box-shadow: inset 0 0 0 3px rgb(168 75 63 / 8%); transform: rotate(3deg); }
+    .theme-space .theme-overlay {
+      background:
+        radial-gradient(circle at 8% 16%, rgb(37 116 217 / 28%) 0 2px, transparent 3px),
+        radial-gradient(circle at 88% 22%, rgb(240 163 52 / 34%) 0 2px, transparent 3px),
+        radial-gradient(circle at 72% 86%, rgb(37 116 217 / 18%) 0 3px, transparent 4px),
+        linear-gradient(135deg, rgb(37 116 217 / 3%), transparent 45%, rgb(84 143 222 / 5%));
+      background-size: 82px 82px, 113px 113px, 139px 139px, 100% 100%;
+    }
+    .theme-space .theme-overlay::before { width: 380px; height: 380px; right: -210px; top: -178px; border: 3px solid rgb(37 116 217 / 10%); border-radius: 50%; box-shadow: 0 0 0 31px rgb(37 116 217 / 3%), 0 0 0 70px rgb(240 163 52 / 3%); }
+    .theme-space .theme-overlay::after { width: 170px; height: 170px; left: -82px; bottom: -80px; border: 2px dashed rgb(37 116 217 / 12%); border-radius: 50%; }
     .content { position: relative; z-index: 1; }
     .board-header { display: flex; align-items: end; justify-content: space-between; min-height: 82px; padding: 0 10px 24px; border-bottom: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); }
     .board-header h1 { max-width: 1120px; overflow: hidden; margin: 0; color: var(--ink); font-size: 48px; line-height: 1.08; font-weight: 900; letter-spacing: .045em; white-space: nowrap; text-overflow: ellipsis; }
